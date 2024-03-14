@@ -64,6 +64,49 @@ Bootloader is small piece of code stored in the MCU flash or ROM to act as an ap
 - By default MCU will not execute any code from this memory but you can configure MCU to boot or execute bootloader from this memory.           
     
 <img src="images/memory_organisation.png" alt="MCUs Embedded Memory Organisation" title="MCUs Embedded Memory Organisation">     
+    
+		
+		
+## Reset sequence of the Cortex M Processor      
+     
+- When you reset the processor (press reset button on your microcontroller), The PC (program counter register) is first loaded with the value 0x0000_0000
+- Then processor read the _value_ @ memory location 0x0000_0000 in to the MSP (Main Stack Pointer register)
+- That means, processor first initialises the Stack pointer
+- After that processor read the value @ memory location 0x0000_0004 in to the PC, that value actually contains the address of reset handler and PC jumps to the reset handler
+- A reset handler is just a C or assembly function written by you to carry out any initialisations required
+- From reset handler you call your main() function of the application		 		         
+    
+<img src="images/reset_sequence.png" alt="Reset sequence of the Cortex M Processor" title="Reset sequence of the Cortex M Processor">   		       
+    
+		
+		
+## Memory aliasing      
+       
+<img src="images/memory_aliasing.png" alt="Memory aliasing" title="Memory aliasing">   		         
+      
+Memory aliasing is a technique used by the microcontroller manufacturer to map different addresses onto different other addresses.   
+    
+<img src="images/memory_aliasing2.png" alt="Memory aliasing" title="Memory aliasing">   
+     
+For example, in the image shown above, by default the base address of the user flash 0x0800_0000 is mapped onto the base address of the memory map 0x0000_0000. Hence, if you read 0th address 0x0000_0000 then that address somehow converted to the 0x0800_0000 address.   
+     
+Similarly, if you read 0x0000_0004 address then you will end up reading 0x0800_0000. That's because, memory region 0x0800_xxxx is mapped onto 0x0000_xxxx memory regions, Thats what we call Memory aliasing.           
+    
+		
+		
+## Boot configuration of STM32F446xx    
+       
+<img src="images/boot_config_stm32f446xx.png" alt="Table 2. Boot modes" title="Table 2. Boot modes">     
+     
+		 
+     
+	 		 		   
+     
+	 		 		   
+     
+	 		 		   
+    
+		
 
 
 				 	
