@@ -128,7 +128,7 @@ Unfortunately we cannot communicate with the bootloader over virtual Com Port (U
 We will use USART3 peripheral to talk to the bootloader (USART3_RX **PC11** Input and USART3_Tx **PC10** Ouput) along with USB-TTL converter and also download an application from ST's official website, STM32 Flash loader demonstrator (UM0462) available on for Windows.	
      
 > [!NOTE] 
-> STM32 Flash loader demonstrator is now replaced with STM32CubeProgrammer available for are the platforms       
+> STM32 Flash loader demonstrator is now replaced with STM32CubeProgrammer and available for all the platforms.       
      
 <img src="images/usb_ttl_usart3_connection.png" alt="USB to TTL, USART3 connection with NUCLEO-F446RE" title="USB to TTL, USART3 connection with NUCLEO-F446RE">   	
      
