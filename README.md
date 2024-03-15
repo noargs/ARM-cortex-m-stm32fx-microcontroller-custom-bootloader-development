@@ -153,7 +153,29 @@ High level diagram (shown below) of how we communicate to the Host from the Nucl
     
 - **USART3** peripheral as a debug port to get the debug prints from the bootloader. As, in the early development we can put some printf statements in our code to see what is happening under the hood when different functions is being called (Unidirectional from Bootloader to PC).	Off course we need the USB to UART converter (USB-TTL) hardware to push the data to PC from the Nucleo board. (During custom bootloader development we will only use USART2)		
 		 
-<img src="images/transport_protocol.png" alt="Transport protocol used in our custom bootloader" title="Transport protocol used in our custom bootloader">  		
+<img src="images/transport_protocol.png" alt="Transport protocol used in our custom bootloader" title="Transport protocol used in our custom bootloader">  	
+     
+		 
+## Bootloader: Code placement in Flash   
+    
+Our ROM memory is of 30 kilobytes when considering ST's STM32F446RE microcontroller and the ST has already stored the ST bootloader in that memory area which we cannot remove. However, the bootloader which we are going to write will place into the Main flash memory, that is user's flash in the sector 0 and 1.   	
+		 
+<img src="images/bootplacement.png" alt="Bootloader: Code placement in Flash" title="Bootloader: Code placement in Flash">  	  
+    
+		
+## Bootloader supported commands    
+		 
+<img src="images/boot_supported_cmd.png" alt="Bootloader supported commands" title="Bootloader supported commands">    
+    
+<img src="images/boot_supported_cmd2.png" alt="Bootloader supported commands" title="Bootloader supported commands">    
+     
+		 
+## Host - Bootloader communication    		  		
+		 
+<img src="images/host_bootloader_communication.png" alt="Host - Bootloader communication" title="Host - Bootloader communication">
+					 
+     
+
      
     
 		
