@@ -94,11 +94,32 @@ Similarly, if you read 0x0000_0004 address then you will end up reading 0x0800_0
     
 		
 		
-## Boot configuration of STM32F446xx    
+## Boot configuration of STM32F446xx      
+     
+All the manufacturer need not to forward the 0th address 0x0000_0000 to the base address of user flash 0x0800_0000. Hence, it's manufacturer dependent.		 
+      
+       
+As shown in the below image, There are 2 pins in the STs microcontrollers (Boot 1 pin and Boot 0 pin), and using those pins, you can control where exactly the processor has to fetch instructions during reset.    
        
 <img src="images/boot_config_stm32f446xx.png" alt="Table 2. Boot modes" title="Table 2. Boot modes">     
+      
+Let's say, you place some code in the embedded SRAM and after reset if you want your processor to execute instructions from embedded SRAM, then during reset the Boot 1 and the Boot 0 pins has to be 1.		
      
-		 
+In the case of TIs microcontroller, (Datasheet page 92) It says the _On-chip Flash_ starts at 0x0000_0000 whereas in ST it start from 0x0800_0000. Hence memory aliasing is not required for TIs microcontrollers. As the flash is already mapped at 0th address.  		 
+       
+<img src="images/ti_datasheet.png" alt="TIs Datasheet page 92 Table 2-4" title="TIs Datasheet page 92 Table 2-4">     
+     
+## Activating bootloader		    
+     
+Going back to _Table 2. Boot modes_, in order to access the **System memory** we have to keep the BOOT1 0 and BOOT0 at 1. When we look into the schematic and search for both the pins, then we will find that **BOOT0** is connected to **pin 7** of the NUCLEO (**This is same across all the NUCLEOs**), You can short it with pin 5 (VDD) **OR** 16 (3.3v) as shown below. Similar details can be found in the User Manual of the NUCLEO board _page 53_. 		 
+       
+<img src="images/boot0.png" alt="BOOT0 to VDD or 3.3v" title="BOOT0 to VDD or 3.3v">     
+     
+Similarly, **BOOT1** has to be 0 (GND)		 
+     
+<img src="images/boot1.png" alt="BOOT1 (PB2) to 0 (GND)" title="BOOT1 (PB2) to 0 (GND)">   		 
+          
+     
      
 	 		 		   
      
