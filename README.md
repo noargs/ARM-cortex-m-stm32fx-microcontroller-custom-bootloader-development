@@ -117,8 +117,34 @@ Going back to _Table 2. Boot modes_, in order to access the **System memory** we
      
 Similarly, **BOOT1** has to be 0 (GND)		 
      
-<img src="images/boot1.png" alt="BOOT1 (PB2) to 0 (GND)" title="BOOT1 (PB2) to 0 (GND)">   		 
-          
+<img src="images/boot1.png" alt="BOOT1 (PB2) to 0 (GND)" title="BOOT1 (PB2) to 0 (GND)">   		
+     
+Before communicating with the bootloader, we need to learn some of the features of the ST's native bootloader which is there in the System memory. For this, there is a nice **Application note AN2606**, you have to refer in order to fully understand the STM32 microcontroller System memory boot mode. As, this is design by ST and it has several features like it supports communicating over USART peripheral, CAN, USB, I2C, SPI, etc. And they use a communication protocol which is actually not a standardised protocol in order to communicate with external world and the bootloader.		
+     
+Unfortunately we cannot communicate with the bootloader over virtual Com Port (USART2 interface available on PA2 and PA3 of NUCLEOs). According to Tabe 77 of Application note, bootloader of STM32F446 microcontroller doesn't support communicating over the USART2 peripheral.	   
+     
+<img src="images/usart_bootloader.png" alt="Table 77 Bootloader available over USART protocol" title="Table 77 Bootloader available over USART protocol">   
+     
+We will use USART3 peripheral to talk to the bootloader (USART3_RX **PC11** Input and USART3_Tx **PC10** Ouput) along with USB-TTL converter and also download an application from ST's official website, STM32 Flash loader demonstrator (UM0462) available on for Windows.	
+     
+> [!NOTE] STM32 Flash loader demonstrator is now replaced with STM32CubeProgrammer available for are the platforms       
+     
+<img src="images/usb_ttl_usart3_connection.png" alt="USB to TTL, USART3 connection with NUCLEO-F446RE" title="USB to TTL, USART3 connection with NUCLEO-F446RE">   	
+     
+		 
+|  NUCLEO-F446RE      | USB-TTL      |
+|:--------------------|-------------:|
+|  USART3_RX PC11     |  TX          |
+|  USART3_TX PC10     |  RX          |
+|  GND                |  GND         |			 	 		
+|  BOOT0 to VDD       |              |     
+|  BOOT1 (PB2) to GND |              |    
+     
+		 
+<img src="images/stm32cubeprogrammer.png" alt="USB to TTL, USART3 connection with NUCLEO-F446RE" title="USB to TTL, USART3 connection with NUCLEO-F446RE">  		 
+     
+		 
+		       
      
      
 	 		 		   
