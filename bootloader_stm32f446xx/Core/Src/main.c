@@ -62,7 +62,10 @@ static void MX_CRC_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
+
 static void printmsg(char* format, ...);
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -110,12 +113,27 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
 //	HAL_UART_Transmit(&huart2, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
 //	HAL_UART_Transmit(&huart3, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
 
-	uint32_t current_tick = HAL_GetTick();
-	printmsg("current_tick = %d\r\n", current_tick);
-	while (HAL_GetTick() <= (current_tick+500));
+//	uint32_t current_tick = HAL_GetTick();
+//	printmsg("current_tick = %d\r\n", current_tick);
+//	while (HAL_GetTick() <= (current_tick+500));
+
+	if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET)
+	{
+	  printmsg("BL_DEBUG_MSG: Button is pressed.. going to BL mode \n\r");
+
+	  // continue in bootloader mode
+	  bootloader_uart_read_data();
+	}
+	else
+	{
+	  printmsg("BL_DEBUG_MSG: Button is not pressed.. executing User application \n\r");
+	  bootloader_jump_to_user_app();
+	}
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -298,6 +316,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void bootloader_uart_read_data(void)
+{
+
+}
+
+void bootloader_jump_to_user_app(void)
+{
+
+}
 
 // prints formatted string to console over UART
 void printmsg(char* format, ...)

@@ -6,6 +6,11 @@
      
 <img src="images/usb_ttl_usart3_connection.png" alt="USB to TTL, USART3 connection with NUCLEO-F446RE" title="USB to TTL, USART3 connection with NUCLEO-F446RE">   	
      
-		 
+     
+## Bootloader code flow chart     
+     
+<img src="images/flow_chart_usart.png" alt="Bootloader code flow chart" title="Bootloader code flow chart">    
+     
+		 		 		 
 		 
      
