@@ -57,7 +57,7 @@ Below are the temporary steps to demonstrate the code placement from `0x8008000`
 <img src="images/memory_browser.png" alt="Memory content at 0x8008000 in the Memory Browser" title="Memory content at 0x8008000 in the Memory Browser">     
      
 > [!NOTE]	
-> If you remove the debugger and press Reset, the MCU will halt at the 0x0800_**0000** address since no code is present in this region.     
+> If you remove the debugger and press Reset, the MCU will halt at the 0x0800_**0000** address since no code is present in this region. (As previously read, Memory aliasing in ST's MCUs where 0x800_0000 point to 0x0000_0000 address and 0x0000_0000 contains the address of Reset Handler, since no code (Reset handler address) in this region, hence cause the MCU to halt.)    
 > However, If you run this app in Debug mode, the gdb debugger flashes the code at 0x0800_**8000** and point the PC (Program Counter register) to this region straight away.	  
     
 		
