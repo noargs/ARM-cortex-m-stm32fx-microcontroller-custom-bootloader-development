@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdarg.h>
+#include <string.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,6 +39,9 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
+// enable it to get debug messages over debug uart
+#define BL_DEBUG_MSG_EN
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -46,7 +51,8 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-
+#define D_UART     &huart3
+#define C_UART     &huart2
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,12 +62,12 @@ static void MX_CRC_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void printmsg(char* format, ...);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+char somedata[] = "Hello from Bootloader\r\n";
 /* USER CODE END 0 */
 
 /**
@@ -104,7 +110,12 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+//	HAL_UART_Transmit(&huart2, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart3, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
 
+	uint32_t current_tick = HAL_GetTick();
+	printmsg("current_tick = %d\r\n", current_tick);
+	while (HAL_GetTick() <= (current_tick+500));
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -287,6 +298,23 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+// prints formatted string to console over UART
+void printmsg(char* format, ...)
+{
+#ifdef BL_DEBUG_MSG_EN
+
+  char str[80];
+
+  // extract the argument list using VA apis
+  va_list args;
+  va_start(args, format);
+  vsprintf(str, format, args);
+  HAL_UART_Transmit(D_UART, (uint8_t*)str, strlen(str), HAL_MAX_DELAY);
+  va_end(args);
+
+#endif
+}
 
 /* USER CODE END 4 */
 
