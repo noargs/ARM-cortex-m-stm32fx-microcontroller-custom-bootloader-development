@@ -43,7 +43,7 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+char userdata[] = "Hello from User application \r\n";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,6 +97,10 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+	HAL_UART_Transmit(&huart2, (uint8_t*)userdata, sizeof(userdata), HAL_MAX_DELAY);
+	uint32_t current_tick = HAL_GetTick();
+	while (HAL_GetTick() <= current_tick + 1000);
 
     /* USER CODE BEGIN 3 */
   }

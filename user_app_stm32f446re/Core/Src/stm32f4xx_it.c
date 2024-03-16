@@ -201,9 +201,13 @@ void SysTick_Handler(void)
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
+uint8_t flag=0;
 void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, !flag);
+  flag = !flag;
 
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(B1_Pin);
