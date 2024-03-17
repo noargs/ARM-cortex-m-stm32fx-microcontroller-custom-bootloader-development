@@ -30,6 +30,52 @@ Once User application starts running and User application wants to handle any in
 **VTOR**      
      
 Hence, at the start of User application you have to inform the ARM Controller that Vector table of User application is at 0x0800_8000 using one of the register of the ARM controller **VTOR (Vector Table Relocation Register)** and VTOR has value of 0 by default. You suppose to change the content of this register (put base address of sector 2 i.e. 0x0800_8000) when the control jump to the User application in the Reset Handler.	
+     
+We have Rx buffer `uint8_t bl_rx_buffer[200]` of 200 bytes to keep the receive data. First element of `bl_rx_buffer[0]` will always be the **length** information to follow and Second element bl_rx_buffer[1] will be the **command code** to try in `swtich(bl_rx_buffer[1])` to execute right function handle.
+
+```
+void bootloader_uart_read_data(void)
+{
+  uint8_t rcv_len = 0;
+
+  while (1)
+  {
+	memset(bl_rx_buffer, 0, 200);
+
+	// here we will read and decode the commands coming from Host
+	//
+	// first read only one byte from the host, which is the "length"
+	// field of the command packet
+	HAL_UART_Receive(C_UART, bl_rx_buffer, 1, HAL_MAX_DELAY);
+	
+	rcv_len = bl_rx_buffer[0];
+	
+	HAL_UART_Receive(C_UART, &bl_rx_buffer[1], rcv_len, HAL_MAX_DELAY);
+
+	switch (bl_rx_buffer[1])
+	{
+	case BL_GET_VER:
+	  bootloader_handle_getver_cmd(bl_rx_buffer);
+	  break;
+	case BL_GET_HELP:
+	  bootloader_handle_gethelp_cmd(bl_rx_buffer);
+	  break;
+	case BL_GET_CID:
+	  bootloader_handle_getcid_cmd(bl_rx_buffer);
+	  break;
+	
+	...
+	
+	case BL_OTP_READ:
+		bootloader_handle_read_otp(bl_rx_buffer);
+		break;
+		default:
+		printmsg("BL_DEBUG_MSG: Invalid command code received from host\n");
+		break;
+		}
+	}
+}	
+```
       
 <img src="images/bl_get_ver.png" alt="Command BL_GET_VER" title="Command BL_GET_VER"> 					
       

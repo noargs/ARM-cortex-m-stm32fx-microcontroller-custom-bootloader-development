@@ -328,7 +328,7 @@ void bootloader_uart_read_data(void)
   {
 	memset(bl_rx_buffer, 0, 200);
 
-	// here we will read and decode the commands coming from host
+	// here we will read and decode the commands coming from Host
 	//
 	// first read only one byte from the host, which is the "length"
 	// field of the command packet
@@ -338,7 +338,42 @@ void bootloader_uart_read_data(void)
 
 	switch (bl_rx_buffer[1])
 	{
-
+	case BL_GET_VER:
+	  bootloader_handle_getver_cmd(bl_rx_buffer);
+	  break;
+	case BL_GET_HELP:
+	  bootloader_handle_gethelp_cmd(bl_rx_buffer);
+	  break;
+	case BL_GET_CID:
+	  bootloader_handle_getcid_cmd(bl_rx_buffer);
+	  break;
+	case BL_GET_RDP_STATUS:
+	  bootloader_handle_getrdp_cmd(bl_rx_buffer);
+	  break;
+	case BL_GO_TO_ADDR:
+	  bootloader_handle_gotoaddr_cmd(bl_rx_buffer);
+	  break;
+	case BL_FLASH_ERASE:
+	  bootloader_handle_flash_erase_cmd(bl_rx_buffer);
+	  break;
+	case BL_MEM_WRITE:
+	  bootloader_handle_memwrite_cmd(bl_rx_buffer);
+	  break;
+	case BL_ENDIS_RW_PROTECT:
+	  bootloader_handle_endis_rw_protect(bl_rx_buffer);
+	  break;
+	case BL_MEM_READ:
+	  bootloader_handle_mem_read(bl_rx_buffer);
+	  break;
+	case BL_READ_SECTOR_STATUS:
+	  bootloader_handle_read_sector_status(bl_rx_buffer);
+	  break;
+	case BL_OTP_READ:
+	  bootloader_handle_read_otp(bl_rx_buffer);
+	  break;
+	default:
+	  printmsg("BL_DEBUG_MSG: Invalid command code received from host\n");
+	  break;
 	}
   }
 }
