@@ -33,7 +33,7 @@ Hence, at the start of User application you have to inform the ARM Controller th
      
 We have Rx buffer `uint8_t bl_rx_buffer[200]` of 200 bytes to keep the receive data. First element of `bl_rx_buffer[0]` will always be the **length** information to follow and Second element bl_rx_buffer[1] will be the **command code** to try in `swtich(bl_rx_buffer[1])` to execute right function handle.
 
-```
+```c
 void bootloader_uart_read_data(void)
 {
   uint8_t rcv_len = 0;
@@ -69,11 +69,11 @@ void bootloader_uart_read_data(void)
 	case BL_OTP_READ:
 		bootloader_handle_read_otp(bl_rx_buffer);
 		break;
-		default:
-		printmsg("BL_DEBUG_MSG: Invalid command code received from host\n");
+	default:
+	  printmsg("BL_DEBUG_MSG: Invalid command code received from host\n");
 		break;
-		}
 	}
+ }
 }	
 ```
       
