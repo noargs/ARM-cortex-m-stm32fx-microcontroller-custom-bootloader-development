@@ -9,7 +9,9 @@
      
 ## Bootloader code flow chart     
      
-<img src="images/flow_chart_usart.png" alt="Bootloader code flow chart" title="Bootloader code flow chart">  
+<img src="images/flow_chart_usart.png" alt="Bootloader code flow chart" title="Bootloader code flow chart"> 
+<img src="images/flow_chart_usart2.png" alt="Bootloader code flow chart" title="Bootloader code flow chart">
+<img src="images/flow_chart_usart3.png" alt="Bootloader code flow chart" title="Bootloader code flow chart"> 
      
 When the User button **isn't** pressed during RESET of MCU, the `bootloader_jump_to_user_app()` will be called and it will make a jump to User application (project name `user_app_stm32f446re`).  		
      
