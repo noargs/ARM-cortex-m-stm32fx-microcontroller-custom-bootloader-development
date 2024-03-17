@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include  <stdint.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -55,6 +55,22 @@ void Error_Handler(void);
 /* USER CODE BEGIN EFP */
 void bootloader_jump_to_user_app(void);
 void bootloader_uart_read_data(void);
+
+void bootloader_handle_getver_cmd(uint8_t* bl_rx_buffer);
+void bootloader_handle_gethelp_cmd(uint8_t* bl_rx_buffer);
+void bootloader_handle_getcid_cmd(uint8_t* bl_rx_buffer);
+void bootloader_handle_getrdp_cmd(uint8_t* bl_rx_buffer);
+void bootloader_handle_gotoaddr_cmd(uint8_t* bl_rx_buffer);
+void bootloader_handle_flash_erase_cmd(uint8_t* bl_rx_buffer);
+void bootloader_handle_memwrite_cmd(uint8_t* bl_rx_buffer);
+void bootloader_handle_endis_rw_protect(uint8_t* bl_rx_buffer);
+void bootloader_handle_mem_read(uint8_t* bl_rx_buffer);
+void bootloader_handle_read_sector_status(uint8_t* bl_rx_buffer);
+void bootloader_handle_read_otp(uint8_t* bl_rx_buffer);
+
+
+
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -112,7 +128,7 @@ void bootloader_uart_read_data(void);
 #define BL_OTP_READ				0x5B
 
 //This command is used disable all sector read/write protection
-#define BL_DIS_R_W_PROTECT				0x5C
+#define BL_DIS_R_W_PROTECT		0x5C
 
 /* USER CODE END Private defines */
 

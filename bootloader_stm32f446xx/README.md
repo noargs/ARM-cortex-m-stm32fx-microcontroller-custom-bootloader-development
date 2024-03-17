@@ -13,6 +13,43 @@
      
 When the User button **isn't** pressed during RESET of MCU, the `bootloader_jump_to_user_app()` will be called and it will make a jump to User application (project name `user_app_stm32f446re`).  		
      
+		 
+### bootloader_jump_to_user_app(void)    
+    
+```c
+/**
+ * Jump to User application, Here we are assuming
+ * FLASH_SECTOR2_BASE_ADDRESS is where the User
+ * application stored.
+ */
+void bootloader_jump_to_user_app(void)
+{
+  // function pointer to hold the address of Reset Handler of User app.
+  void (*app_reset_handler)(void);
+
+  printmsg("BL_DEBUG_MSG: bootloader_jump_to_user_app\n");
+
+  //1. configure the MSP by reading the value from the base address of Sector 2
+  uint32_t msp_value = *(volatile uint32_t*)FLASH_SECTOR2_BASE_ADDRESS;
+  printmsg("BL_DEBUG_MSG: MSP value: %#x\n", msp_value);
+
+  // CMSIS function
+  __set_MSP(msp_value);
+
+//  SCB->VTOR = FLASH_SECTOR1_BASE_ADDRESS;
+
+  //2. Now fetch the reset handler address of the User application
+  //   from the location FLASH_SECTOR2_BASE_ADDRESS+4
+  uint32_t resethandler_address = *(volatile uint32_t*)(FLASH_SECTOR2_BASE_ADDRESS + 4);
+  app_reset_handler = (void*)resethandler_address;
+
+  printmsg("BL_DEBUG_MSG: app reset handler address: %#x\n", app_reset_handler);
+
+  //3. jump to reset handler of the user application
+  app_reset_handler();
+}
+```				 
+     
      
 ## Vector table relocation feature (ARM Cortex Mx processor)    
     
@@ -30,6 +67,10 @@ Once User application starts running and User application wants to handle any in
 **VTOR**      
      
 Hence, at the start of User application you have to inform the ARM Controller that Vector table of User application is at 0x0800_8000 using one of the register of the ARM controller **VTOR (Vector Table Relocation Register)** and VTOR has value of 0 by default. You suppose to change the content of this register (put base address of sector 2 i.e. 0x0800_8000) when the control jump to the User application in the Reset Handler.	
+		 
+		 
+		 
+### bootloader_uart_read_data(void)    
      
 We have Rx buffer `uint8_t bl_rx_buffer[200]` of 200 bytes to keep the receive data. First element of `bl_rx_buffer[0]` will always be the **length** information to follow and Second element bl_rx_buffer[1] will be the **command code** to try in `swtich(bl_rx_buffer[1])` to execute right function handle.
 

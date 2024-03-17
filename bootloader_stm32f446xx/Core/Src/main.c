@@ -359,13 +359,13 @@ void bootloader_uart_read_data(void)
 	case BL_MEM_WRITE:
 	  bootloader_handle_memwrite_cmd(bl_rx_buffer);
 	  break;
-	case BL_ENDIS_RW_PROTECT:
+	case BL_EN_RW_PROTECT:
 	  bootloader_handle_endis_rw_protect(bl_rx_buffer);
 	  break;
 	case BL_MEM_READ:
 	  bootloader_handle_mem_read(bl_rx_buffer);
 	  break;
-	case BL_READ_SECTOR_STATUS:
+	case BL_READ_SECTOR_P_STATUS:
 	  bootloader_handle_read_sector_status(bl_rx_buffer);
 	  break;
 	case BL_OTP_READ:
@@ -408,8 +408,6 @@ void bootloader_jump_to_user_app(void)
 
   //3. jump to reset handler of the user application
   app_reset_handler();
-
-
 }
 
 // prints formatted string to console over UART
@@ -428,6 +426,62 @@ void printmsg(char* format, ...)
 
 #endif
 }
+
+void bootloader_handle_getver_cmd(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_gethelp_cmd(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_getcid_cmd(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_getrdp_cmd(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_gotoaddr_cmd(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_flash_erase_cmd(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_memwrite_cmd(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_endis_rw_protect(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_mem_read(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_read_sector_status(uint8_t* bl_rx_buffer)
+{
+
+}
+
+void bootloader_handle_read_otp(uint8_t* bl_rx_buffer)
+{
+
+}
+
 
 /* USER CODE END 4 */
 
