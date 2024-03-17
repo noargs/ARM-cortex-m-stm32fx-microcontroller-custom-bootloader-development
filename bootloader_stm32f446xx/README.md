@@ -27,8 +27,38 @@ Now, once the bootloader runs (on MCU Reset), and if the User button isn't press
 Once User application starts running and User application wants to handle any interrupt, as ARM Cortex Mx processor by default look for Vector table at 0x0000_0000 (Memory alias to 0x0800_0000). However, There's no  Vector table for User application, rather a Vector table for Bootloader.	
      
 		 
-**VTOR**		 
-Hence, at the start of User application you have to inform the ARM Controller that Vector table of User application is at 0x0800_8000 using one of the register of the ARM controller **VTOR (Vector Table Relocation Register)** and VTOR has value of 0 by default. You suppose to change the content of this register (put base address of sector 2 i.e. 0x0800_8000) when the control jump to the User application in the Reset Handler.			
+**VTOR**      
+     
+Hence, at the start of User application you have to inform the ARM Controller that Vector table of User application is at 0x0800_8000 using one of the register of the ARM controller **VTOR (Vector Table Relocation Register)** and VTOR has value of 0 by default. You suppose to change the content of this register (put base address of sector 2 i.e. 0x0800_8000) when the control jump to the User application in the Reset Handler.	
+      
+<img src="images/bl_get_ver.png" alt="Command BL_GET_VER" title="Command BL_GET_VER"> 					
+      
+<img src="images/bl_get_help.png" alt="Command BL_GET_HELP" title="Command BL_GET_HELP"> 					
+      
+<img src="images/bl_get_cid.png" alt="Command BL_GET_CID" title="Command BL_GET_CID"> 									
+      
+<img src="images/bl_got_to_addr.png" alt="Command BL_GO_TO_ADDR" title="Command BL_GO_TO_ADDR"> 					
+      
+<img src="images/bl_flash_erase.png" alt="Command BL_FLASH_ERASE" title="Command BL_FLASH_ERASE"> 					
+      
+<img src="images/bl_mem_write.png" alt="Command BL_MEM_WRITE" title="Command BL_MEM_WRITE"> 					
+      
+<img src="images/bl_mem_read.png" alt="Command BL_MEM_READ" title="Command BL_MEM_READ"> 					
+      
+<img src="images/bl_en_r_w_protect.png" alt="Command BL_EN_R_W_PROTECT" title="Command BL_EN_R_W_PROTECT"> 					
+      
+<img src="images/bl_dis_r_w_protect.png" alt="Command BL_DIS_R_W_PROTECT" title="Command BL_DIS_R_W_PROTECT"> 					
+      
+<img src="images/bl_read_sector_status.png" alt="Command BL_READ_SECTOR_STATUS" title="Command BL_READ_SECTOR_STATUS"> 					
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
      
 		    
