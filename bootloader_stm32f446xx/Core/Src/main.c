@@ -33,7 +33,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define D_UART     &huart3
+#define C_UART     &huart2
+#define BL_RX_LEN  200
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,8 +53,9 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-#define D_UART     &huart3
-#define C_UART     &huart2
+
+char somedata[] = "Hello from Bootloader\r\n";
+uint8_t bl_rx_buffer[BL_RX_LEN];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,7 +73,7 @@ static void printmsg(char* format, ...);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-char somedata[] = "Hello from Bootloader\r\n";
+
 /* USER CODE END 0 */
 
 /**
@@ -319,11 +322,58 @@ static void MX_GPIO_Init(void)
 
 void bootloader_uart_read_data(void)
 {
+  uint8_t rcv_len = 0;
 
+  while (1)
+  {
+	memset(bl_rx_buffer, 0, 200);
+
+	// here we will read and decode the commands coming from host
+	//
+	// first read only one byte from the host, which is the "length"
+	// field of the command packet
+	HAL_UART_Receive(C_UART, bl_rx_buffer, 1, HAL_MAX_DELAY);
+	rcv_len = bl_rx_buffer[0];
+	HAL_UART_Receive(C_UART, &bl_rx_buffer[1], rcv_len, HAL_MAX_DELAY);
+
+	switch (bl_rx_buffer[1])
+	{
+
+	}
+  }
 }
 
+/**
+ * Jump to User application, Here we are assuming
+ * FLASH_SECTOR2_BASE_ADDRESS is where the User
+ * application stored.
+ */
 void bootloader_jump_to_user_app(void)
 {
+  // function pointer to hold the address of Reset Handler of User app.
+  void (*app_reset_handler)(void);
+
+  printmsg("BL_DEBUG_MSG: bootloader_jump_to_user_app\n");
+
+  //1. configure the MSP by reading the value from the base address of Sector 2
+  uint32_t msp_value = *(volatile uint32_t*)FLASH_SECTOR2_BASE_ADDRESS;
+  printmsg("BL_DEBUG_MSG: MSP value: %#x\n", msp_value);
+
+  // CMSIS function
+  __set_MSP(msp_value);
+
+//  SCB->VTOR = FLASH_SECTOR1_BASE_ADDRESS;
+
+  //2. Now fetch the reset handler address of the User application
+  //   from the location FLASH_SECTOR2_BASE_ADDRESS+4
+  uint32_t resethandler_address = *(volatile uint32_t*)(FLASH_SECTOR2_BASE_ADDRESS + 4);
+  app_reset_handler = (void*)resethandler_address;
+
+  printmsg("BL_DEBUG_MSG: app reset handler address: %#x\n", app_reset_handler);
+
+  //3. jump to reset handler of the user application
+  app_reset_handler();
+
 
 }
 
