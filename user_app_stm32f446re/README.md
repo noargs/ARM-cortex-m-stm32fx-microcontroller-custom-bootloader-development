@@ -8,7 +8,7 @@ We also enable the UART peripheral (USART2) in this User application `user_app_s
       
 When **PC13** `B1 [Blue PushButton]` is pressed, let's toggle an 	**PA5** `LD2 [Green Led]` in Interrupt handler   
     
-```
+```c
 uint8_t flag=0;
 
 void EXTI15_10_IRQHandler(void)
@@ -22,7 +22,7 @@ void EXTI15_10_IRQHandler(void)
      
 And finally print `char userdata[] = "Hello from User application \r\n"` in the `main()` function as follows:     
     
-```
+```c
 while (1)
 {
   HAL_UART_Transmit(&huart2, (uint8_t*)userdata, sizeof(userdata), HAL_MAX_DELAY);
