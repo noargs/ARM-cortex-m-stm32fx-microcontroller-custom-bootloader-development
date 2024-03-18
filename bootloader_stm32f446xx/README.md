@@ -1,4 +1,19 @@
-## USART Modules 
+## USART Modules     
+     
+* Install pySerial python library to communicate with the target over the serial port. pySerial python module provide all the opening, reading, and writing a python functions for the serial port  
+    
+```bash
+# for windows 
+python -m pip install pyserial 
+
+# for Ubuntu
+sudo apt-get install python3-serial 
+
+# for MacOSX 
+curl https://bootstrap.pypa.io/get-pip.py > get-pip.py
+sudo python get-pip.py
+sudo pip install pyserial
+```				 
     
 * _UART2_ of STM32's peripheral of the microcontroller to receive the commands which is sent by the Host, as well as replies that bootloader sends to the PC `#define C_UART     &huart2` (We make use of the virtual COM port, **PA2** and **PA3** pins of NUCLEO) (to use with Desktop Application to get the Debug messages). [Nucleo F466re User Guide: page 25, 6.8 USART communication](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)     
     
@@ -139,6 +154,8 @@ void bootloader_uart_read_data(void)
 }	
 ```    
      
+		 
+     
 ## Command: BL_GET_VER		 
       
 <img src="images/bl_get_ver.png" alt="Command BL_GET_VER" title="Command BL_GET_VER"> 	
@@ -173,7 +190,9 @@ void bootloader_handle_getver_cmd(uint8_t* bl_rx_buffer)
 	// checksum is wrong (send NACK)
 	bootloader_send_nack();
   
-```						
+```					
+    
+			
       
 <img src="images/bl_get_help.png" alt="Command BL_GET_HELP" title="Command BL_GET_HELP"> 					
       
