@@ -68,7 +68,11 @@ void bootloader_handle_mem_read(uint8_t* bl_rx_buffer);
 void bootloader_handle_read_sector_status(uint8_t* bl_rx_buffer);
 void bootloader_handle_read_otp(uint8_t* bl_rx_buffer);
 
-
+void bootloader_send_ack(uint8_t command_code, uint8_t follow_len);
+void bootloader_send_nack(void);
+uint8_t bootloader_verify_crc(uint8_t* pdata, uint32_t len, uint32_t crc_host);
+uint8_t get_bootloader_version(void);
+void bootloader_uart_write_data(uint8_t* buffer, uint32_t len);
 
 
 /* USER CODE END EFP */

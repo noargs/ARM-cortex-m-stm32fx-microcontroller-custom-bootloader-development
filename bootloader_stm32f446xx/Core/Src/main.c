@@ -67,8 +67,6 @@ static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 static void printmsg(char* format, ...);
-static void bootloader_send_ack(uint8_t command_code, uint8_t follow_len);
-static void bootloader_send_nack(void);
 
 
 /* USER CODE END PFP */
@@ -437,27 +435,24 @@ void bootloader_handle_getver_cmd(uint8_t* bl_rx_buffer)
   printmsg("BL_DEBUG_MSG: bootloader_handle_getver_cmd\n");
 
   // total length of the command packet
-  uint32_t command_packet_len = bl_rx_buffer[0] + 1;
+  uint32_t command_packet_len = bl_rx_buffer[0]+1;
 
   // extract the CRC32 send by the Host
-  uint32_t host_crc = *((uint32_t*)(bl_rx_buffer + command_packet_len - 4));
+  uint32_t host_crc = *((uint32_t*)(bl_rx_buffer + command_packet_len-4));
 
-  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len + 1, 0))
+  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len-4, host_crc))
   {
 	printmsg("BL_DEBUG_MSG: checksum success !!\n");
 
 	// checksum is correct (send ACK)
 	bootloader_send_ack(bl_rx_buffer[0], 1);
 	bl_version = get_bootloader_version();
-
 	printmsg("BL_DEBUG_MSG: BL_VER: %d %x#x\n", bl_version, bl_version);
-
 	bootloader_uart_write_data(&bl_version, 1);
   }
   else
   {
 	printmsg("BL_DEBUG_MSG: checksum fail !!\n");
-
 	// checksum is wrong (send NACK)
 	bootloader_send_nack();
   }
@@ -513,7 +508,7 @@ void bootloader_handle_read_otp(uint8_t* bl_rx_buffer)
 
 }
 
-static void bootloader_send_ack(uint8_t command_code, uint8_t follow_len)
+void bootloader_send_ack(uint8_t command_code, uint8_t follow_len)
 {
   // send 2 byte: first is `ack` and the second is `len` value
   uint8_t ack_buf[2];
@@ -522,7 +517,7 @@ static void bootloader_send_ack(uint8_t command_code, uint8_t follow_len)
   HAL_UART_Transmit(C_UART, ack_buf, 2, HAL_MAX_DELAY);
 }
 
-static void bootloader_send_nack(void)
+void bootloader_send_nack(void)
 {
   uint8_t nack = BL_NACK;
   HAL_UART_Transmit(C_UART, &nack, 1, HAL_MAX_DELAY);
@@ -530,7 +525,7 @@ static void bootloader_send_nack(void)
 
 uint8_t bootloader_verify_crc(uint8_t* pdata, uint32_t len, uint32_t crc_host)
 {
-  uint32_t urwCRCValue = 0xff;
+  uint32_t uwCRCValue = 0xff;
 
   for (uint32_t i=0; i<len; i++)
   {

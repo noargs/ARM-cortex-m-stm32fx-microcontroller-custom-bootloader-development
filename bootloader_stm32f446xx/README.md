@@ -137,7 +137,9 @@ void bootloader_uart_read_data(void)
 	}
  }
 }	
-```
+```    
+     
+## Command: BL_GET_VER		 
       
 <img src="images/bl_get_ver.png" alt="Command BL_GET_VER" title="Command BL_GET_VER"> 	
     
@@ -150,31 +152,27 @@ void bootloader_handle_getver_cmd(uint8_t* bl_rx_buffer)
   printmsg("BL_DEBUG_MSG: bootloader_handle_getver_cmd\n");
 
   // total length of the command packet
-  uint32_t command_packet_len = bl_rx_buffer[0] + 1;
+  uint32_t command_packet_len = bl_rx_buffer[0]+1;
 
   // extract the CRC32 send by the Host
-  uint32_t host_crc = *((uint32_t*)(bl_rx_buffer + command_packet_len - 4));
+  uint32_t host_crc = *((uint32_t*)(bl_rx_buffer + command_packet_len-4));
 
-  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len + 1, 0))
+  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len-4, host_crc))
   {
 	printmsg("BL_DEBUG_MSG: checksum success !!\n");
 
 	// checksum is correct (send ACK)
 	bootloader_send_ack(bl_rx_buffer[0], 1);
 	bl_version = get_bootloader_version();
-
 	printmsg("BL_DEBUG_MSG: BL_VER: %d %x#x\n", bl_version, bl_version);
-
 	bootloader_uart_write_data(&bl_version, 1);
   }
   else
   {
 	printmsg("BL_DEBUG_MSG: checksum fail !!\n");
-
 	// checksum is wrong (send NACK)
 	bootloader_send_nack();
-  }
-}
+  
 ```						
       
 <img src="images/bl_get_help.png" alt="Command BL_GET_HELP" title="Command BL_GET_HELP"> 					
