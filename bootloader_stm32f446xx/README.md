@@ -1,24 +1,5 @@
-## USART Modules     
-     
-* Install **pySerial** python library to communicate with the target over the serial port. pySerial python module provide all the opening, reading, and writing a python functions for the serial port.  
-    
-```bash
-# for windows 
-python -m pip install pyserial 
+## USART Modules       
 
-# for Ubuntu
-sudo apt-get install python3-serial 
-
-# for MacOSX 
-brew install pipx
-pipx install pyserial
-
-# python Serial library for MacOSX to communicate with the target
-pyserial-miniterm <Serial-port-name>
-
-# list all the Serial port on MacOSX
-pyserial-ports 
-```				 
     
 * _UART2_ of STM32's peripheral of the microcontroller to receive the commands which is sent by the Host, as well as replies that bootloader sends to the PC `#define C_UART     &huart2` (We make use of the virtual COM port, **PA2** and **PA3** pins of NUCLEO) (to use with Desktop Application to get the Debug messages). [Nucleo F466re User Guide: page 25, 6.8 USART communication](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)     
     
