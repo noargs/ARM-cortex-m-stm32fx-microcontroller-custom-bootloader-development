@@ -94,6 +94,12 @@ void bootloader_handle_read_otp(uint8_t* bl_rx_buffer);
 //version 1.0
 #define BL_VERSION              0x10
 
+#define BL_ACK                  0xA5
+#define BL_NACK                 0x7F
+
+#define VERIFY_CRC_FAIL         1
+#define VERIFY_CRC_SUCCESS      0
+
 //This command is used to read the bootloader version from the MCU
 #define BL_GET_VER				0x51
 

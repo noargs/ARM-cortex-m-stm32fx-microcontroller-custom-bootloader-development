@@ -6,6 +6,25 @@
      
 <img src="images/usb_ttl_usart3_connection.png" alt="USB to TTL, USART3 connection with NUCLEO-F446RE" title="USB to TTL, USART3 connection with NUCLEO-F446RE">   	
      
+```c
+// prints formatted string to console over UART
+void printmsg(char* format, ...)
+{
+#ifdef BL_DEBUG_MSG_EN
+
+  char str[80];
+
+  // extract the argument list using VA apis
+  va_list args;
+  va_start(args, format);
+  vsprintf(str, format, args);
+  HAL_UART_Transmit(D_UART, (uint8_t*)str, strlen(str), HAL_MAX_DELAY);
+  va_end(args);
+
+#endif
+}
+```		 
+     
      
 ## Bootloader code flow chart     
      
