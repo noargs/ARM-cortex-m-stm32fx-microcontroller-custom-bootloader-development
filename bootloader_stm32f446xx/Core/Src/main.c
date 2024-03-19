@@ -109,24 +109,9 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-//	HAL_UART_Transmit(&huart2, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
-//	HAL_UART_Transmit(&huart3, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
-
-//	uint32_t current_tick = HAL_GetTick();
-//	printmsg("current_tick = %d\r\n", current_tick);
-//	while (HAL_GetTick() <= (current_tick+500));
-
 	if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET)
 	{
-	  printmsg("BL_DEBUG_MSG: Button is pressed.. going to BL mode \n\r");
+	  printmsg("BL_DEBUG_MSG:Button is pressed.. going to BL mode\n\r");
 
 	  // continue in bootloader mode
 	  bootloader_uart_read_data();
@@ -137,8 +122,23 @@ int main(void)
 	  bootloader_jump_to_user_app();
 	}
 
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+//  while (1)
+//  {
+    /* USER CODE END WHILE */
+
+//	HAL_UART_Transmit(&huart2, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart3, (uint8_t*)somedata, sizeof(somedata), HAL_MAX_DELAY);
+
+//	uint32_t current_tick = HAL_GetTick();
+//	printmsg("current_tick = %d\r\n", current_tick);
+//	while (HAL_GetTick() <= (current_tick+500));
+
     /* USER CODE BEGIN 3 */
-  }
+//  }
   /* USER CODE END 3 */
 }
 
@@ -391,6 +391,10 @@ void bootloader_jump_to_user_app(void)
   printmsg("BL_DEBUG_MSG: bootloader_jump_to_user_app\n");
 
   //1. configure the MSP by reading the value from the base address of Sector 2
+  //
+  //   In normal working, After MCU RESET, PC is loaded with 0x0000_0000 and ARM
+  //   Cortex Mx processor take the value from 0x0000_0000 and put it into MSP
+  //   0x0000_0000 is also aliased to 0x0800_0000 (And this contain vector table)
   uint32_t msp_value = *(volatile uint32_t*)FLASH_SECTOR2_BASE_ADDRESS;
   printmsg("BL_DEBUG_MSG: MSP value: %#x\n", msp_value);
 
@@ -401,6 +405,10 @@ void bootloader_jump_to_user_app(void)
 
   //2. Now fetch the reset handler address of the User application
   //   from the location FLASH_SECTOR2_BASE_ADDRESS+4
+  //
+  //   In normal working, address 0x0000_0000 in PC contain `value` which is stuffed into
+  //   MSP by the processor and then instruction 0x0000_0000+4 loaded into PC and its `value`
+  //   contain Reset Handler (i.e. address of Reset Handler)
   uint32_t resethandler_address = *(volatile uint32_t*)(FLASH_SECTOR2_BASE_ADDRESS + 4);
   app_reset_handler = (void*)resethandler_address;
 

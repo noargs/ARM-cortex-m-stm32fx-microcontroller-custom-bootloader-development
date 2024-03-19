@@ -46,7 +46,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define FLASH_SECTOR2_BASE_ADDRESS      0x08008000U
+
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -94,6 +94,8 @@ void bootloader_uart_write_data(uint8_t* buffer, uint32_t len);
 #define SWO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+
+#define FLASH_SECTOR2_BASE_ADDRESS      0x08008000U
 
 //version 1.0
 #define BL_VERSION              0x10
