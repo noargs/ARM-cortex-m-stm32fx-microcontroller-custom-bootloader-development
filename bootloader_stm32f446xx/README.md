@@ -175,14 +175,66 @@ void bootloader_handle_getver_cmd(uint8_t* bl_rx_buffer)
 	printmsg("BL_DEBUG_MSG: checksum fail !!\n");
 	// checksum is wrong (send NACK)
 	bootloader_send_nack();
-  
+}  
 ```					
     
-			
+## Command: BL_GET_HELP     
+     
+<img src="images/bl_get_help.png" alt="Command BL_GET_HELP" title="Command BL_GET_HELP"> 			
+     
+```c
+uint8_t supported_commands[] = {BL_GET_VER,
+	                              BL_GET_HELP,
+								                BL_GET_CID,
+																....       };
+								
+void bootloader_handle_gethelp_cmd(uint8_t* bl_rx_buffer)
+{
+  printmsg("BL_DEBUG_MSG: bootloader_handle_gethelp_cmd\n");
+  ...
+  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len-4, host_crc))
+  {
+    ...
+	  bootloader_send_ack(bl_rx_buffer[0], sizeof(supported_commands));
+	  bootloader_uart_write_data(supported_commands, sizeof(supported_commands));
+  }
+  ...
+}
+```		 
+    
+		
+## Command: BL_GET_CID     			
       
-<img src="images/bl_get_help.png" alt="Command BL_GET_HELP" title="Command BL_GET_HELP"> 					
-      
-<img src="images/bl_get_cid.png" alt="Command BL_GET_CID" title="Command BL_GET_CID"> 									
+<img src="images/bl_get_cid.png" alt="Command BL_GET_CID" title="Command BL_GET_CID"> 		
+    
+```c
+uint16_t get_mcu_chip_id(void)
+{
+  // The STM32F446xx MCUs intergrate an MCU ID code. This ID identifies the ST MCU part number
+  // and the die revision. It is part of the DBG_MCU component and is mapped on the
+  // external PPB bus (see Section 33.16 on page 1304). This code is accessed using the
+  // JTAG debug pCat.2ort (4 to 5 pins) or the SW debug port (two pins) or by the user software
+  // It is even accessible while the MCU is under system reset.
+  uint16_t cid;
+  cid = (uint16_t)(DBGMCU->IDCODE) & 0x0FFF;
+  return cid;
+}
+
+void bootloader_handle_getcid_cmd(uint8_t* bl_rx_buffer)
+{
+  uint16_t bl_cid_num = 0;
+  ...
+  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len - 4, host_crc))
+  {
+	  ...
+	  bl_cid_num = get_mcu_chip_id();
+	...
+}
+```			
+    
+<img src="images/DBGMCU_IDCODE.png" alt="DBGMCU_IDCODE" title="DBGMCU_IDCODE"> 		
+    
+							 						
       
 <img src="images/bl_got_to_addr.png" alt="Command BL_GO_TO_ADDR" title="Command BL_GO_TO_ADDR"> 					
       
