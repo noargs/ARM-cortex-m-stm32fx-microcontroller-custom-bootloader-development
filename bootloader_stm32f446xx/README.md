@@ -183,10 +183,7 @@ void bootloader_handle_getver_cmd(uint8_t* bl_rx_buffer)
 <img src="images/bl_get_help.png" alt="Command BL_GET_HELP" title="Command BL_GET_HELP"> 			
      
 ```c
-uint8_t supported_commands[] = {BL_GET_VER,
-	                              BL_GET_HELP,
-								                BL_GET_CID,
-																....       };
+uint8_t supported_commands[] = {BL_GET_VER, BL_GET_HELP, BL_GET_CID, .. };
 								
 void bootloader_handle_gethelp_cmd(uint8_t* bl_rx_buffer)
 {
