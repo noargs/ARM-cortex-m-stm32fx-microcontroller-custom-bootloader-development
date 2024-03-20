@@ -218,6 +218,21 @@ static void MX_CRC_Init(void)
 
   /* USER CODE END CRC_Init 1 */
   hcrc.Instance = CRC;
+
+  /*****************************************************/
+  /* [!NOTE] *******************************************/
+  /*****************************************************/
+  /* crc module of F0 supports multiple data format */
+  /* while F4 which is used in this course has only one */
+  /* input data format (32bit). Uncomment following settings */
+  /* For STM32F0                                               */
+
+//  hcrc.Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_ENABLE;
+//  hcrc.Init.DefaultInitValueUse = DEFAULT_INIT_VALUE_ENABLE;
+//  hcrc.Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_NONE;
+//  hcrc.Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_DISABLE;
+//  hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_WORDS;
+
   if (HAL_CRC_Init(&hcrc) != HAL_OK)
   {
     Error_Handler();
@@ -532,7 +547,28 @@ void bootloader_handle_getcid_cmd(uint8_t* bl_rx_buffer)
 
 void bootloader_handle_getrdp_cmd(uint8_t* bl_rx_buffer)
 {
+  uint8_t rdp_level = 0x00;
+  printmsg("BL_DEBUG_MSG: bootloader_handle_getrdp_cmd\n");
 
+  // total length of the command packet
+  uint32_t command_packet_len = bl_rx_buffer[0] + 1;
+
+  // extract the CRC32 sent by the Host
+  uint32_t host_crc = *((uint32_t*)(bl_rx_buffer + command_packet_len - 4));
+
+  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len - 4, host_crc))
+  {
+	printmsg("BL_DEBUG_MSG: checksum success!!\n");
+	bootloader_send_ack(bl_rx_buffer[0], 1);
+	rdp_level = get_flash_rdp_level();
+	printmsg("BL_DEBUG_MSG: MCU id: %d %#x !!\n", rdp_level, rdp_level);
+	bootloader_uart_write_data(&rdp_level, 1);
+  }
+  else
+  {
+	printmsg("BL_DEBUG_MSG: checksum fail!!\n");
+	bootloader_send_nack();
+  }
 }
 
 void bootloader_handle_gotoaddr_cmd(uint8_t* bl_rx_buffer)
@@ -595,6 +631,8 @@ uint8_t bootloader_verify_crc(uint8_t* pdata, uint32_t len, uint32_t crc_host)
 	uwCRCValue = HAL_CRC_Accumulate(&hcrc, &i_data, 1);
   }
 
+  hcrc.Instance->CR |= CRC_CR_RESET;
+
   if (uwCRCValue == crc_host)
   {
 	return VERIFY_CRC_SUCCESS;
@@ -623,6 +661,22 @@ uint16_t get_mcu_chip_id(void)
   uint16_t cid;
   cid = (uint16_t)(DBGMCU->IDCODE) & 0x0FFF;
   return cid;
+}
+
+uint8_t get_flash_rdp_level(void)
+{
+  uint8_t rdp_status =0;
+
+#if 0
+  FLASH_OBProgramInitTypeDef ob_handle;
+  HAL_FLASHEx_OBGetConfig(&ob_handle);
+  rdp_status = (uint8_t)ob_handle.RDPLevel;
+#else
+  volatile uint32_t *pOB_addr = (uint32_t*) 0x1FFFC000; // extract bit 15-8
+  rdp_status = (uint8_t)(*pOB_addr >> 8);
+#endif
+
+  return rdp_status;
 }
 
 

@@ -233,11 +233,64 @@ void bootloader_handle_getcid_cmd(uint8_t* bl_rx_buffer)
 ```			
     
 <img src="images/DBGMCU_IDCODE.png" alt="DBGMCU_IDCODE" title="DBGMCU_IDCODE"> 		
+     
+		 
+## Command: BL_GO_TO_ADDR		 
     
-							 						
+<img src="images/bl_go_to_addr.png" alt="Command BL_GO_TO_ADDR" title="Command BL_GO_TO_ADDR"> 			
       
-<img src="images/bl_got_to_addr.png" alt="Command BL_GO_TO_ADDR" title="Command BL_GO_TO_ADDR"> 					
-      
+## Flash memory commands:    
+    
+All the remaining commands are used to deal with flash memory i.e. erasing flash memory, jump to different sector of flash memory etc.					
+    
+<img src="../images/bootplacement.png" alt="Code placement (i.e. Bootloader and User app) in Flash memory" title="Code placement (i.e. Bootloader and User app) in Flash memory"> 				
+     
+As previously described, we store bootloader on first two sectors, Sector 0 and Sector 1, Whereas User app on Sector 2 onward. **By default all these sectors (0 to 7) are writable, erasable and readable**. However the microcontroller also gives us the provision to secure the contents of the Flash memory. We use Option bytes (16 bytes size from 0x1FFF_C000 - 0x1FFF_C00F) to manage security level on the Flash memories / sectors (Reference Manual 3.6 Option bytes, page: 72 ).	 
+   
+> [!NOTE]	 	 
+> Memory read protection Level 2 is an irreversible operation. When Level 2 is activated, the level of protection cannot be decreased to Level 0 or Level 1.    
+    
+     
+## Command: BL_GET_RDP_STATUS    
+		 		 		
+```c
+uint8_t get_flash_rdp_level(void)
+{
+  uint8_t rdp_status =0;
+#if 0
+  FLASH_OBProgramInitTypeDef ob_handle;
+  HAL_FLASHEx_OBGetConfig(&ob_handle);
+  rdp_status = (uint8_t)ob_handle.RDPLevel;
+#else
+  volatile uint32_t *pOB_addr = (uint32_t*) 0x1FFFC000; // extract bit 15-8
+  rdp_status = (uint8_t)(*pOB_addr >> 8);
+#endif
+
+  return rdp_status;
+}
+
+void bootloader_handle_getrdp_cmd(uint8_t* bl_rx_buffer)
+{
+  uint8_t rdp_level = 0x00;
+  ...
+
+  if (!bootloader_verify_crc(&bl_rx_buffer[0], command_packet_len - 4, host_crc))
+  {
+	  ...
+	  rdp_level = get_flash_rdp_level();
+	  ...
+}
+```						
+    
+Same can also be done using `HAL_FLASHEx_OBGetConfig(&ob_handle)` as guarded with if macro inside `get_flash_rdp_level(void)` 		
+   
+<img src="images/hal_rdp.png" alt="HAL RDP" title="HAL RDP"> 			
+     
+		 
+## Command: BL_GO_TO_ADDR		 
+    
+<img src="images/bl_go_to_addr.png" alt="Command BL_GO_TO_ADDR" title="Command BL_GO_TO_ADDR"> 				 
+						
 <img src="images/bl_flash_erase.png" alt="Command BL_FLASH_ERASE" title="Command BL_FLASH_ERASE"> 					
       
 <img src="images/bl_mem_write.png" alt="Command BL_MEM_WRITE" title="Command BL_MEM_WRITE"> 					
